@@ -3,7 +3,7 @@
 using namespace std;
 using namespace std::filesystem;
 
-dna_individual fasta_input::file_input(path s) {
+dna_profile fasta_input::file_input(path s) {
 
     if(!exists(s)){
         throw std::runtime_error("File doesn't exist");
@@ -30,6 +30,6 @@ dna_individual fasta_input::file_input(path s) {
             input+=line;
     }
 
-    return dna_individual(header,input);
+    return dna_profile(header,input);
 
 }
