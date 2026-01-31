@@ -16,6 +16,10 @@ class dna_profile
 
     std::unordered_map<std::string,int> dna_profile_map;
 
+    int find_left_flank(int start,std::string left_flank);
+    std::vector<int> count_str(int start, std::string str);
+    bool is_right_flank_present(int start,std::string right_flank);
+
 public:
 
     void total_iterated_count_str();

@@ -46,40 +46,77 @@ void dna_profile::total_iterated_count_str() {
 
 int dna_profile::count_single_tandem_repeats(const vector<string>& tandem_obj) {
 
-    int left_flank_length = tandem_obj[0].length();
-    int right_flank_length = tandem_obj[2].length();
-    int tandem_length = tandem_obj[1].length();
+    int left_flank_start = 0;
 
-    int strand_pattern_length = strand_pattern.length();
+    while(true){
 
-    string temp = strand_pattern.substr(0,left_flank_length);
+        int str_start = find_left_flank(left_flank_start,tandem_obj.at(0));
 
-    bool left_flank_present = false;
+        vector<int> count_str_result = count_str(str_start,tandem_obj.at(1));
 
-    int str_size = 0;
-
-    int str_start;
-
-    for(int i=0;i<strand_pattern_length-4;i++) {
-
-        if(left_flank_present){
-            if(temp==tandem_obj[2]){
-                break;
-            }
-            str_size++;
-        } else {
-            if(temp==tandem_obj[0]){
-                temp = strand_pattern.substr(i,right_flank_length);
-                left_flank_present = 1;
-            }
-            
+        if(count_str_result.size()==0){
+            left_flank_start = str_start;
+            continue;
         }
 
-        temp.erase(0,1);
-        temp+=strand_pattern[i];
-    }
+        if(is_right_flank_present(count_str_result.at(0),tandem_obj.at(2))){
+            return count_str_result.at(1);
+        } 
 
-    return str_size/tandem_length;
+        left_flank_start = count_str_result.at(0);
+
+    }
 
 }
 
+int dna_profile::find_left_flank(int start,string left_flank) {
+
+    string temp = strand_pattern.substr(start,left_flank.length());
+    start += left_flank.length();
+
+    int strand_pattern_length = strand_pattern.length();
+
+    for(int i=start;i<strand_pattern_length-4;i++) {
+        if(temp==left_flank){
+            return i;
+        }
+
+        temp.erase(0,1);
+        temp+=strand_pattern.at(i);
+    }
+    
+    return -1;
+}
+
+vector<int> dna_profile::count_str(int start, string str) {
+
+    int strand_pattern_length = strand_pattern.length();
+    string temp = strand_pattern.substr(start,4);
+    
+    int str_count = 0;
+
+    if(temp==str){
+        str_count++;
+    } else {
+        return {};
+    }
+
+    start+=4;
+
+    for(int i=start;i<strand_pattern_length;i+=4) {
+        temp=strand_pattern.substr(i,4);
+        if(temp==str){
+            str_count++;
+        } else {
+            return {i,str_count};
+        }
+    }
+
+    return {};
+}
+
+bool dna_profile::is_right_flank_present(int start,string right_flank) {
+
+    return right_flank==strand_pattern.substr(start,right_flank.length());
+
+}
