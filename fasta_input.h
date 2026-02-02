@@ -4,6 +4,8 @@
 #include<filesystem>
 #include<string>
 #include<iostream>
+#include<cctype>
+#include<algorithm>
 
 
 class fasta_input {

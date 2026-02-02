@@ -27,7 +27,27 @@ dna_profile fasta_input::file_input(path s) {
             header = line;
             first = 1;
         } else 
+            for(unsigned char c : line){
+
+                if(c>='0' && c<='9'){
+                    cerr<<"Rejected : corrupted dna sequence, contains number";
+                    exit(-1);
+                }
+
+                std::transform(line.begin(), line.end(), line.begin(),
+                    [](unsigned char c) {
+                    return std::toupper(c);
+                });
+
+            }
+
             input+=line;
+
+    }
+
+    if(input.length()==0){
+        cerr<<"Error file doesn't contain dna sequence";
+        exit(-2);
     }
 
     return dna_profile(header,input);
