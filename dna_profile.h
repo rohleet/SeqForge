@@ -32,7 +32,7 @@ public:
 
     bool dna_profile_comparison(dna_profile dna_profile);
 
-
+    bool iupac_character_detection(std::string be_checked,std::string str);
 
     dna_profile(std::string individual_credentails,std::string strand_pattern);
     ~dna_profile();

@@ -120,3 +120,25 @@ bool dna_profile::is_right_flank_present(int start,string right_flank) {
     return right_flank==strand_pattern.substr(start,right_flank.length());
 
 }
+
+bool dna_profile::iupac_character_detection(string be_checked,string str) {
+
+    for(int i=0;i<str.length();i++){
+        if(be_checked.at(i)==str.at(i)){
+            continue;
+        } else {
+
+            switch (be_checked.at(i))
+            {
+            case 'N':
+                
+                break;
+            
+            default:
+                break;
+            }
+
+        }
+    }
+
+}
