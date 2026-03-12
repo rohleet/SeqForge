@@ -92,22 +92,49 @@ vector<int> dna_profile::count_str(int start, string str) {
 
     int strand_pattern_length = strand_pattern.length();
     string temp = strand_pattern.substr(start,4);
+    int str_len = str.length();
     
     int str_count = 0;
+    bool matched = false;
 
-    if(temp==str){
-        str_count++;
-    } else {
+    // check first STR
+    for(int k = str_len-1; k <= str_len+1; k++) {
+
+        if(start + k > strand_pattern_length || k <= 0) continue;
+
+        string temp = strand_pattern.substr(start,k);
+
+        if(temp==str || check_local_tandem_alignment(temp,str)){
+            str_count++;
+            start += k;
+            matched = true;
+            break;
+        }
+    }
+
+    if(!matched){
         return {};
     }
 
-    start+=4;
+    for(int i=start;i<strand_pattern_length;) {
 
-    for(int i=start;i<strand_pattern_length;i+=4) {
-        temp=strand_pattern.substr(i,4);
-        if(temp==str){
-            str_count++;
-        } else {
+        matched = false;
+
+        for(int k = str_len-1; k <= str_len+1; k++) {
+
+            if(i + k > strand_pattern_length || k <= 0) continue;
+
+            string temp = strand_pattern.substr(i,k);
+
+            if(temp==str || check_local_tandem_alignment(temp,str)){
+                str_count++;
+                i += k;
+                matched = true;
+                break;
+            }
+        }
+
+        if(!matched){
             return {i,str_count};
         }
     }
@@ -121,24 +148,46 @@ bool dna_profile::is_right_flank_present(int start,string right_flank) {
 
 }
 
-bool dna_profile::iupac_character_detection(string be_checked,string str) {
+bool dna_profile::check_local_tandem_alignment(string present_str,string standard_tandem) {
 
-    for(int i=0;i<str.length();i++){
-        if(be_checked.at(i)==str.at(i)){
-            continue;
-        } else {
+    int present_str_length = present_str.length();
+    int standard_tandem_length = standard_tandem.length();
 
-            switch (be_checked.at(i))
-            {
-            case 'N':
-                
-                break;
+    int match = 1;
+    int mis_match = 0;
+    int gap = -1;
+
+    vector<vector<int>> dp(present_str_length+1, vector<int>(standard_tandem_length+1,0));
+
+    int best_score = 0;
+
+    for(int i=1;i<=present_str_length;i++){
+
+        for(int j=1;j<=standard_tandem_length;j++){
+
+            int c_diag= dp[i-1][j-1];
+            int c_left = dp[i-1][j]+gap;
+            int c_up = dp[i][j-1]+gap;
             
-            default:
-                break;
+            if(present_str.at(i-1)==standard_tandem.at(j-1)){
+                c_diag += match; 
             }
 
+            dp[i][j] = max(0,max(c_diag,max(c_left,c_up)));
+
+            best_score = max(dp[i][j],best_score);
+
         }
+
     }
+
+    if((((double)best_score*100)/max(present_str_length,standard_tandem_length))>=75) return true;
+
+    return false;
+}
+
+bool dna_profile::iupac_character_detection(char be_checked,char original) {
+
+    
 
 }

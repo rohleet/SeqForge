@@ -11,6 +11,14 @@ struct tandems
 class dna_profile
 {
 
+    std::unordered_map<char,std::vector<char>> iupac_character = {{'R',{'A','G'}},
+                                                                  {'Y',{'C','T'}},
+                                                                  {'S',{'G','C'}},
+                                                                  {'W',{'A','T'}},
+                                                                  {'K',{'G','T'}},
+                                                                  {'M',{'A','C'}}
+                                                                 };
+
     std::string individual_credentails;
     std::string strand_pattern;
 
@@ -19,6 +27,8 @@ class dna_profile
     int find_left_flank(int start,std::string left_flank);
     std::vector<int> count_str(int start, std::string str);
     bool is_right_flank_present(int start,std::string right_flank);
+    bool check_local_tandem_alignment(std::string be_checked,std::string str); //Smidth-Waterman algorithm.
+    std::unordered_map<char,std::vector<char>> iupac_character;
 
 public:
 
@@ -32,7 +42,7 @@ public:
 
     bool dna_profile_comparison(dna_profile dna_profile);
 
-    bool iupac_character_detection(std::string be_checked,std::string str);
+    bool iupac_character_detection(char be_checked,char original);
 
     dna_profile(std::string individual_credentails,std::string strand_pattern);
     ~dna_profile();
